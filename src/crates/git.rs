@@ -63,7 +63,15 @@ impl CrateTrait for GitRepo {
         if path.join("HEAD").is_file() {
             info!("updating cached repository {}", self.url);
             Command::new(workspace, "git")
-                .args(&["fetch", "--all"])
+                .args(&[
+                    "-c",
+                    &format!(
+                        "credential.helper={}",
+                        crate::tools::GIT_CREDENTIAL_NULL.path(workspace).display()
+                    ),
+                    "fetch",
+                    "--all",
+                ])
                 .cd(&path)
                 .run()
                 .with_context(|_| format!("failed to update {}", self.url))?;
@@ -71,11 +79,13 @@ impl CrateTrait for GitRepo {
             info!("cloning repository {}", self.url);
             Command::new(workspace, "git")
                 .args(&[
+                    "-c",
+                    &format!(
+                        "credential.helper={}",
+                        crate::tools::GIT_CREDENTIAL_NULL.path(workspace).display()
+                    ),
                     "clone",
                     "--bare",
-                    // avoid issues with git credentials helper on Windows by
-                    // providing fake credentials that GitHub will ignore.
-                    &self.url.replace("https://", "https://ghost:ghost@"),
                 ])
                 .args(&[&path])
                 .run()

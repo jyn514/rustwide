@@ -2,7 +2,7 @@ mod binary_crates;
 mod rustup;
 
 use crate::workspace::Workspace;
-use binary_crates::BinaryCrate;
+use binary_crates::{BinaryCrate, CrateName};
 use failure::{bail, Error};
 use log::info;
 use rustup::Rustup;
@@ -12,14 +12,20 @@ use std::path::PathBuf;
 pub(crate) static RUSTUP: Rustup = Rustup;
 
 pub(crate) static CARGO_INSTALL_UPDATE: BinaryCrate = BinaryCrate {
-    crate_name: "cargo-update",
+    crate_name: CrateName::Registry("cargo-update"),
     binary: "cargo-install-update",
     cargo_subcommand: Some("install-update"),
 };
 
 pub(crate) static RUSTUP_TOOLCHAIN_INSTALL_MASTER: BinaryCrate = BinaryCrate {
-    crate_name: "rustup-toolchain-install-master",
+    crate_name: CrateName::Registry("rustup-toolchain-install-master"),
     binary: "rustup-toolchain-install-master",
+    cargo_subcommand: None,
+};
+
+pub(crate) static GIT_CREDENTIAL_NULL: BinaryCrate = BinaryCrate {
+    crate_name: CrateName::Git("https://gist.github.com/pietroalbini/13784ed62f9156d1ca81b7ff968fa3ef"),
+    binary: "git-credential-null",
     cargo_subcommand: None,
 };
 
@@ -27,6 +33,7 @@ static INSTALLABLE_TOOLS: &[&dyn Tool] = &[
     &RUSTUP,
     &CARGO_INSTALL_UPDATE,
     &RUSTUP_TOOLCHAIN_INSTALL_MASTER,
+    &GIT_CREDENTIAL_NULL,
 ];
 
 trait Tool: Send + Sync {
