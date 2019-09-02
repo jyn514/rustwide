@@ -67,7 +67,7 @@ impl CrateTrait for GitRepo {
                     "-c",
                     &format!(
                         "credential.helper={}",
-                        crate::tools::GIT_CREDENTIAL_NULL.path(workspace).display()
+                        crate::utils::normalize_path(&crate::tools::GIT_CREDENTIAL_NULL.path(workspace)).display()
                     ),
                     "fetch",
                     "--all",
@@ -82,10 +82,11 @@ impl CrateTrait for GitRepo {
                     "-c",
                     &format!(
                         "credential.helper={}",
-                        crate::tools::GIT_CREDENTIAL_NULL.path(workspace).display()
+                        crate::utils::normalize_path(&crate::tools::GIT_CREDENTIAL_NULL.path(workspace)).display()
                     ),
                     "clone",
                     "--bare",
+                    &self.url,
                 ])
                 .args(&[&path])
                 .run()
